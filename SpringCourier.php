@@ -2,21 +2,12 @@
 
 declare(strict_types=1);
 
-/**
- * Simple courier client for the recruitment API.
- *
- * - uses the recruitment API documented in `docs.html`
- * - provides `newPackage(array $order, array $params)` and
- *   `packagePDF(string $trackingNumber)` as required by the task.
- */
 class SpringCourier
 {
     private const DEFAULT_API_URL = 'https://developers.baselinker.com/recruitment/api';
 
     private string $apiKey;
-
     private string $service;
-
     private string $labelFormat;
 
     public function __construct(string $apiKey, string $service = 'PPTT', string $labelFormat = 'PDF')
@@ -26,10 +17,6 @@ class SpringCourier
         $this->labelFormat = $labelFormat;
     }
 
-    /**
-     * Create a shipment.
-     * Returns array with API response on success, or throws RuntimeException on error.
-     */
     public function newPackage(array $order, array $params = []): array
     {
         $service = $params['service'] ?? $this->service;
@@ -40,10 +27,8 @@ class SpringCourier
         $shipment['Weight'] = $params['weight'] ?? $order['weight'] ?? 1.0;
         $shipment['LabelFormat'] = $params['label_format'] ?? $this->labelFormat;
 
-        // Consignor (sender) - accept multiple possible input keys
         $consignor = [];
         $consignor['FullName'] = $this->pick($order, ['sender_fullname', 'sender_name', 'sender_full_name'], '');
-        // also keep 'Name' for consistency with some services
         $consignor['Name'] = $consignor['FullName'];
         $consignor['Company'] = $this->pick($order, ['sender_company', 'sender_org', 'sender_business'], '');
         $consignor['AddressLine1'] = $this->pick($order, ['sender_address', 'sender_address_line1', 'sender_street'], '');
@@ -54,7 +39,6 @@ class SpringCourier
         $consignor['Phone'] = $this->pick($order, ['sender_phone', 'sender_telephone', 'sender_mobile'], '');
         $consignor['Email'] = $this->pick($order, ['sender_email', 'sender_mail'], '');
 
-        // Consignee (recipient) - accept multiple possible input keys
         $consignee = [];
         $consignee['FullName'] = $this->pick($order, ['delivery_fullname', 'delivery_name', 'recipient_name', 'delivery_full_name'], '');
         $consignee['Name'] = $consignee['FullName'];
@@ -67,7 +51,6 @@ class SpringCourier
         $consignee['Phone'] = $this->pick($order, ['delivery_phone', 'recipient_phone', 'delivery_telephone'], '');
         $consignee['Email'] = $this->pick($order, ['delivery_email', 'recipient_email'], '');
 
-        // Basic product if not provided
         $products = [];
         if (!empty($params['products']) && is_array($params['products'])) {
             $products = $params['products'];
@@ -82,8 +65,6 @@ class SpringCourier
             ];
         }
 
-        // Ensure services that require a declared value receive one.
-        // Calculate total product value and set ShipmentValue when needed.
         $totalValue = 0.0;
         foreach ($products as $p) {
             $v = isset($p['Value']) ? (float) $p['Value'] : 0.0;
@@ -91,51 +72,35 @@ class SpringCourier
         }
 
         if ($totalValue <= 0.0) {
-            // Some services (like PPTT) require a non-zero declared value.
-            // Prefer an explicit override, otherwise default to 1.0.
             $declared = (isset($params['shipment_value']) ? (float) $params['shipment_value'] : ($params['product_value'] ?? 1.0));
             $totalValue = max(0.0, $declared);
-
-            // If products exist, ensure at least one product has a non-zero value
             if (!empty($products)) {
                 $products[0]['Value'] = $products[0]['Value'] ?? $totalValue;
             }
         }
 
-        // Attach a total shipment value to the shipment payload when available
         if ($totalValue > 0.0) {
             $shipment['ShipmentValue'] = $totalValue;
         }
 
-        // Ensure each product has required customs fields like HsCode and a non-zero Value/ProductValue.
         foreach ($products as $idx => $p) {
-            // Normalize keys to expected API names if different casing used
             if (!isset($p['HsCode']) || $p['HsCode'] === '') {
                 $hs = '';
-                // Check product-level overrides
                 if (isset($p['hs_code'])) {
                     $hs = (string) $p['hs_code'];
                 }
-
-                // Check params-level override
                 if ($hs === '' && isset($params['product_hs_code'])) {
                     $hs = (string) $params['product_hs_code'];
                 }
-
-                // Fallback to order-level fields commonly used
                 if ($hs === '') {
                     $hs = $this->pick($order, ['hs_code', 'hs', 'tariff_code', 'product_hs_code'], '');
                 }
-
-                // If still empty, set a safe default (some carriers require a value)
                 if ($hs === '') {
                     $hs = '000000';
                 }
-
                 $products[$idx]['HsCode'] = $this->truncate((string) $hs, 25);
             }
 
-            // Ensure product value exists and is > 0.0
             $value = null;
             if (isset($p['Value'])) {
                 $value = (float) $p['Value'];
@@ -148,29 +113,23 @@ class SpringCourier
             }
 
             if ($value === null || $value <= 0.0) {
-                // Prefer ShipmentValue if present, otherwise compute per-item as total/quantity or fallback to 1.0
                 $qty = isset($p['Quantity']) ? (int) $p['Quantity'] : (isset($p['quantity']) ? (int) $p['quantity'] : 1);
                 if (isset($shipment['ShipmentValue'])) {
                     $perItem = max(0.01, $shipment['ShipmentValue'] / max(1, $qty));
                 } else {
                     $perItem = max(0.01, $totalValue / max(1, $qty));
                 }
-
-                // fallback absolute default
                 if ($perItem <= 0.0) {
                     $perItem = 1.0;
                 }
-
                 $products[$idx]['Value'] = $perItem;
                 $products[$idx]['ProductValue'] = $perItem;
             } else {
-                // ensure canonical keys exist
                 $products[$idx]['Value'] = $value;
                 $products[$idx]['ProductValue'] = $value;
             }
         }
 
-        // Apply simple truncation rules based on documented field limits
         $this->applyFieldLimits($service, $consignor, $consignee);
 
         $shipment['ConsignorAddress'] = $consignor;
@@ -197,11 +156,6 @@ class SpringCourier
         return $response;
     }
 
-    /**
-     * Download (output) the shipment label for given tracking number.
-     * This function will emit headers and print the label contents.
-     * It throws RuntimeException on errors.
-     */
     public function packagePDF(string $trackingNumber): void
     {
         $payload = [
@@ -214,11 +168,9 @@ class SpringCourier
         ];
 
         $response = $this->post($payload);
-
         if (!is_array($response)) {
             throw new RuntimeException('Invalid response from API');
         }
-
         if (isset($response['ErrorLevel']) && (int) $response['ErrorLevel'] !== 0) {
             $err = $response['Error'] ?? 'Unknown error';
             throw new RuntimeException('API error: ' . $err);
@@ -231,13 +183,11 @@ class SpringCourier
 
         $labelBase64 = $shipment['LabelImage'];
         $labelFormat = strtoupper($shipment['LabelFormat'] ?? $this->labelFormat);
-
         $content = base64_decode($labelBase64);
         if ($content === false) {
             throw new RuntimeException('Failed to decode label image');
         }
 
-        // Choose content type and filename based on format
         $ct = 'application/octet-stream';
         $ext = 'bin';
         switch ($labelFormat) {
@@ -265,7 +215,6 @@ class SpringCourier
                 break;
         }
 
-        // Emit headers for download
         if (!headers_sent()) {
             header('Content-Description: File Transfer');
             header('Content-Type: ' . $ct);
@@ -281,17 +230,11 @@ class SpringCourier
         flush();
     }
 
-    /**
-     * Post JSON payload to API and return decoded response.
-     * Throws RuntimeException on transport errors.
-     */
     private function post(array $payload): array
     {
         $apiUrl = $this->getApiUrl();
-
         $ch = curl_init();
         $json = json_encode($payload);
-
         if ($json === false) {
             throw new RuntimeException('Failed to encode payload to JSON');
         }
@@ -327,12 +270,8 @@ class SpringCourier
         return $decoded;
     }
 
-    /**
-     * Apply simple field-length truncation based on documented field limits.
-     */
     private function applyFieldLimits(string $service, array &$consignor, array &$consignee): void
     {
-        // Minimal limits for common fields (based on docs.html table)
         $limits = [
             'Name' => 30,
             'FullName' => 30,
@@ -359,9 +298,6 @@ class SpringCourier
         }
     }
 
-    /**
-     * Return the first present key from list of candidates in array, or default.
-     */
     private function pick(array $data, array $candidates, string $default = ''): string
     {
         foreach ($candidates as $k) {
