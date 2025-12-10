@@ -82,6 +82,94 @@ class SpringCourier
             ];
         }
 
+        // Ensure services that require a declared value receive one.
+        // Calculate total product value and set ShipmentValue when needed.
+        $totalValue = 0.0;
+        foreach ($products as $p) {
+            $v = isset($p['Value']) ? (float) $p['Value'] : 0.0;
+            $totalValue += $v * ((isset($p['Quantity']) ? (int) $p['Quantity'] : 1));
+        }
+
+        if ($totalValue <= 0.0) {
+            // Some services (like PPTT) require a non-zero declared value.
+            // Prefer an explicit override, otherwise default to 1.0.
+            $declared = (isset($params['shipment_value']) ? (float) $params['shipment_value'] : ($params['product_value'] ?? 1.0));
+            $totalValue = max(0.0, $declared);
+
+            // If products exist, ensure at least one product has a non-zero value
+            if (!empty($products)) {
+                $products[0]['Value'] = $products[0]['Value'] ?? $totalValue;
+            }
+        }
+
+        // Attach a total shipment value to the shipment payload when available
+        if ($totalValue > 0.0) {
+            $shipment['ShipmentValue'] = $totalValue;
+        }
+
+        // Ensure each product has required customs fields like HsCode and a non-zero Value/ProductValue.
+        foreach ($products as $idx => $p) {
+            // Normalize keys to expected API names if different casing used
+            if (!isset($p['HsCode']) || $p['HsCode'] === '') {
+                $hs = '';
+                // Check product-level overrides
+                if (isset($p['hs_code'])) {
+                    $hs = (string) $p['hs_code'];
+                }
+
+                // Check params-level override
+                if ($hs === '' && isset($params['product_hs_code'])) {
+                    $hs = (string) $params['product_hs_code'];
+                }
+
+                // Fallback to order-level fields commonly used
+                if ($hs === '') {
+                    $hs = $this->pick($order, ['hs_code', 'hs', 'tariff_code', 'product_hs_code'], '');
+                }
+
+                // If still empty, set a safe default (some carriers require a value)
+                if ($hs === '') {
+                    $hs = '000000';
+                }
+
+                $products[$idx]['HsCode'] = $this->truncate((string) $hs, 25);
+            }
+
+            // Ensure product value exists and is > 0.0
+            $value = null;
+            if (isset($p['Value'])) {
+                $value = (float) $p['Value'];
+            } elseif (isset($p['value'])) {
+                $value = (float) $p['value'];
+            } elseif (isset($p['ProductValue'])) {
+                $value = (float) $p['ProductValue'];
+            } elseif (isset($p['product_value'])) {
+                $value = (float) $p['product_value'];
+            }
+
+            if ($value === null || $value <= 0.0) {
+                // Prefer ShipmentValue if present, otherwise compute per-item as total/quantity or fallback to 1.0
+                $qty = isset($p['Quantity']) ? (int) $p['Quantity'] : (isset($p['quantity']) ? (int) $p['quantity'] : 1);
+                if (isset($shipment['ShipmentValue'])) {
+                    $perItem = max(0.01, $shipment['ShipmentValue'] / max(1, $qty));
+                } else {
+                    $perItem = max(0.01, $totalValue / max(1, $qty));
+                }
+
+                // fallback absolute default
+                if ($perItem <= 0.0) {
+                    $perItem = 1.0;
+                }
+
+                $products[$idx]['Value'] = $perItem;
+                $products[$idx]['ProductValue'] = $perItem;
+            } else {
+                // ensure canonical keys exist
+                $products[$idx]['Value'] = $value;
+                $products[$idx]['ProductValue'] = $value;
+            }
+        }
+
         // Apply simple truncation rules based on documented field limits
         $this->applyFieldLimits($service, $consignor, $consignee);
 

@@ -1,7 +1,6 @@
 FROM php:8.2-apache
 
-# Serve the application from /var/www/html/src (user requested `/src` as docroot)
-ENV APACHE_DOCUMENT_ROOT /var/www/html/src
+# Use the default Apache document root (/var/www/html)
 
 # Install system dependencies and PHP extensions (curl, mbstring)
 RUN apt-get update \
@@ -15,9 +14,7 @@ RUN apt-get update \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure Apache to use the new document root
-RUN sed -ri -e 's!/var/www/html!/var/www/html/src!g' /etc/apache2/sites-available/*.conf \
-    && sed -ri -e 's!<Directory /var/www/html>!<Directory /var/www/html/src>!g' /etc/apache2/apache2.conf
+# No custom document root configured — use default /var/www/html
 
 # Copy application files
 WORKDIR /var/www/html
