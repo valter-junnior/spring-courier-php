@@ -1,0 +1,1542 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>API Reference - Base.com recruitment task</title>
+    <link href="../assets/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 0.9em;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 5px;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #555;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-menu a.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .section h4 {
+            color: #555;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .method {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .endpoint-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .params-table th,
+        .params-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .params-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .required {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .optional {
+            color: #28a745;
+        }
+
+        .section-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .section-link:hover {
+            color: #5a67d8;
+            text-decoration: underline;
+        }
+
+        .example-request,
+        .example-response {
+            margin: 20px 0;
+        }
+
+        .example-request h4,
+        .example-response h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .json-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .service-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .service-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .service-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .service-card .countries {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            
+            .header {
+                padding: 15px 0;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .user-info {
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .container {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: static;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .sidebar h3 {
+                font-size: 1.2em;
+                margin-bottom: 12px;
+            }
+            
+            .nav-menu a {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .section {
+                margin-bottom: 30px;
+            }
+            
+            .section h2 {
+                font-size: 1.6em;
+                margin-bottom: 15px;
+            }
+            
+            .section h3 {
+                font-size: 1.3em;
+                margin: 20px 0 12px 0;
+            }
+            
+            .section h4 {
+                font-size: 1.1em;
+                margin: 15px 0 8px 0;
+            }
+            
+            /* Responsive tables */
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 15px 0;
+            }
+            
+            .params-table {
+                min-width: 600px;
+                font-size: 12px;
+            }
+            
+            .params-table th,
+            .params-table td {
+                padding: 8px;
+                white-space: nowrap;
+            }
+            
+            .code-block, .json-example {
+                padding: 15px;
+                font-size: 11px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .endpoint {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+            
+            .method {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .endpoint-url {
+                font-size: 1em;
+                word-break: break-all;
+            }
+            
+            .service-list {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .service-card {
+                padding: 15px;
+            }
+            
+            .info-box, .warning-box, .success-box {
+                padding: 12px;
+                margin: 15px 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                font-size: 13px;
+            }
+            
+            .header-content {
+                padding: 0 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .sidebar {
+                padding: 12px;
+            }
+            
+            .sidebar h3 {
+                font-size: 1.1em;
+            }
+            
+            .nav-menu a {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .section h2 {
+                font-size: 1.4em;
+            }
+            
+            .section h3 {
+                font-size: 1.2em;
+            }
+            
+            .section h4 {
+                font-size: 1em;
+            }
+            
+            .params-table {
+                font-size: 11px;
+            }
+            
+            .params-table th,
+            .params-table td {
+                padding: 6px;
+            }
+            
+            .code-block, .json-example {
+                padding: 12px;
+                font-size: 10px;
+                line-height: 1.4;
+            }
+            
+            .endpoint {
+                padding: 12px;
+            }
+            
+            .endpoint-url {
+                font-size: 0.9em;
+            }
+            
+            .service-card {
+                padding: 12px;
+            }
+            
+            .service-card h4 {
+                font-size: 1em;
+            }
+            
+            .info-box, .warning-box, .success-box {
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            .footer {
+                padding: 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1><i class="fas fa-book"></i> API Documentation</h1>
+                <p>Base.com recruitment task - API for courier shipment handling</p>
+            </div>
+            <div class="user-info">
+                <div><strong>Valter Junior</strong></div>
+                <div>Key valid until: 2025-12-16 16:37:56</div>
+                <a href="index?action=logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3><i class="fas fa-list"></i> Table of Contents</h3>
+            <ul class="nav-menu">
+                <li><a href="#introduction" class="active">Introduction</a></li>
+                <li><a href="#authentication">Authentication</a></li>
+                <li><a href="#endpoints">API Endpoints</a></li>
+                <li><a href="#order-shipment">OrderShipment</a></li>
+                <li><a href="#get-shipment-label">GetShipmentLabel</a></li>
+                <li><a href="#get-services">GetServices</a></li>
+                <li><a href="#get-service-info">GetServiceInfo</a></li>
+                <li><a href="#services">Supported services</a></li>
+                <li><a href="#field-limits">Field limits</a></li>
+                <li><a href="#error-codes">Error codes</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div id="introduction" class="section">
+                <h2><i class="fas fa-info-circle"></i> Introduction</h2>
+                <p>The Courier API enables creating courier shipments, downloading labels, and managing courier services. The API is based on the REST standard and uses JSON format for communication.</p>
+                
+                <div class="info-box">
+                    <strong>Base URL:</strong> <code>https://developers.baselinker.com/recruitment/api</code>
+                </div>
+
+                <div class="success-box">
+                    <strong>Status:</strong> The API is fully functional and ready for production use.
+                </div>
+            </div>
+
+            <div id="authentication" class="section">
+                <h2><i class="fas fa-key"></i> Authentication</h2>
+                <p>All API requests require authentication using an API key. The API key must be passed in every request in the <code>Apikey</code> field.</p>
+                
+                <div class="warning-box">
+                    <strong>Your API key:</strong> <code>ylToImatPpw6cNayhgQj</code><br>
+                    <strong>Note:</strong> The API key is confidential and should not be shared with third parties.
+                </div>
+
+                <h4>Authentication example:</h4>
+                <pre class="json-example">
+{
+    "Apikey": "ylToImatPpw6cNayhgQj",
+    "Command": "GetServices"
+}
+                </pre>
+            </div>
+
+            <div id="endpoints" class="section">
+                <h2><i class="fas fa-plug"></i> API Endpoints</h2>
+                <p>The API supports the following endpoints:</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method">POST</span>
+                        <span class="endpoint-url">/api</span>
+                    </div>
+                    <div class="endpoint-description">
+                        All requests are sent to the same endpoint with different commands in the <code>Command</code> field.
+                    </div>
+                </div>
+            </div>
+
+            <div id="order-shipment" class="section">
+                <h2><i class="fas fa-shipping-fast"></i> OrderShipment</h2>
+                <p>Creates a new courier shipment and returns a tracking number. <a href="api-reference" style="color: #667eea; text-decoration: none; font-weight: bold;">📖 Detailed reference</a></p>
+
+                <h4>Request parameters:</h4>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Apikey</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>API key</td>
+                        </tr>
+                        <tr>
+                            <td>Command</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>Must be "OrderShipment"</td>
+                        </tr>
+                        <tr>
+                            <td>Shipment</td>
+                            <td>object</td>
+                            <td class="required">Yes</td>
+                            <td>Shipment data</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h4>Shipment object structure:</h4>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Service</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>Courier service code</td>
+                        </tr>
+                        <tr>
+                            <td>ShipperReference</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>Sender reference</td>
+                        </tr>
+                        <tr>
+                            <td>OrderReference</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Order reference</td>
+                        </tr>
+                        <tr>
+                            <td>OrderDate</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Order date (YYYY-MM-DD)</td>
+                        </tr>
+                        <tr>
+                            <td>DisplayId</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Displayed shipment ID</td>
+                        </tr>
+                        <tr>
+                            <td>InvoiceNumber</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Invoice number</td>
+                        </tr>
+                        <tr>
+                            <td>Weight</td>
+                            <td>number</td>
+                            <td class="required">Yes</td>
+                            <td>Weight in kg</td>
+                        </tr>
+                        <tr>
+                            <td>WeightUnit</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Weight unit (kg, lb)</td>
+                        </tr>
+                        <tr>
+                            <td>Length</td>
+                            <td>number</td>
+                            <td class="optional">No</td>
+                            <td>Length in cm</td>
+                        </tr>
+                        <tr>
+                            <td>Width</td>
+                            <td>number</td>
+                            <td class="optional">No</td>
+                            <td>Width in cm</td>
+                        </tr>
+                        <tr>
+                            <td>Height</td>
+                            <td>number</td>
+                            <td class="optional">No</td>
+                            <td>Height in cm</td>
+                        </tr>
+                        <tr>
+                            <td>DimUnit</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Dimension unit (cm, in)</td>
+                        </tr>
+                        <tr>
+                            <td>Value</td>
+                            <td>number</td>
+                            <td class="optional">No</td>
+                            <td>Shipment value</td>
+                        </tr>
+                        <tr>
+                            <td>ShippingValue</td>
+                            <td>number</td>
+                            <td class="optional">No</td>
+                            <td>Shipping value</td>
+                        </tr>
+                        <tr>
+                            <td>Currency</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Currency (ISO 4217)</td>
+                        </tr>
+                        <tr>
+                            <td>CustomsDuty</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Customs duty type (DDP, DDU)</td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Shipment description</td>
+                        </tr>
+                        <tr>
+                            <td>DeclarationType</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Customs declaration type</td>
+                        </tr>
+                        <tr>
+                            <td>DangerousGoods</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Dangerous goods (Y/N)</td>
+                        </tr>
+                        <tr>
+                            <td>ExportCarrierName</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Export carrier name</td>
+                        </tr>
+                        <tr>
+                            <td>ExportAwb</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Export AWB number</td>
+                        </tr>
+                        <tr>
+                            <td>NIVat</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>NI VAT number</td>
+                        </tr>
+                        <tr>
+                            <td>EuEori</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>EU EORI number</td>
+                        </tr>
+                        <tr>
+                            <td>Ioss</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>IOSS number</td>
+                        </tr>
+                        <tr>
+                            <td>ConsignorAddress</td>
+                            <td>object</td>
+                            <td class="optional">No</td>
+                            <td><a href="api-reference#consignor-address" class="section-link">Sender address</a></td>
+                        </tr>
+                        <tr>
+                            <td>ConsigneeAddress</td>
+                            <td>object</td>
+                            <td class="required">Yes</td>
+                            <td><a href="api-reference#consignee-address" class="section-link">Recipient address</a></td>
+                        </tr>
+                        <tr>
+                            <td>Products</td>
+                            <td>array</td>
+                            <td class="required">Yes</td>
+                            <td><a href="api-reference#product" class="section-link">Product list</a></td>
+                        </tr>
+                        <tr>
+                            <td>LabelFormat</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Label format (PDF, PNG, ZPL)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <div class="example-request">
+                    <h4>Request example:</h4>
+                    <pre class="json-example">
+{
+    "Apikey": "ylToImatPpw6cNayhgQj",
+    "Command": "OrderShipment",
+    "Shipment": {
+        "Service": "PPTT",
+        "ShipperReference": "REF1234567890",
+        "Weight": 1.0,
+        "ConsignorAddress": {
+            "FullName": "John Smith",
+            "Company": "BaseLinker",
+            "AddressLine1": "Kopernika 10",
+            "City": "Gdansk",
+            "Zip": "80208",
+            "Country": "PL",
+            "Phone": "666666666",
+            "Email": "test@example.com"
+        },
+        "ConsigneeAddress": {
+            "Name": "Maud Driant",
+            "Company": "Spring GDS",
+            "AddressLine1": "Strada Foisorului, Nr. 16",
+            "City": "Bucuresti",
+            "Zip": "031179",
+            "Country": "RO",
+            "Phone": "555555555",
+            "Email": "test@example.com"
+        },
+        "Products": [
+            {
+                "Description": "Shipment",
+                "Quantity": 1,
+                "Weight": 1.0,
+                "Value": 10.0,
+                "HsCode": "8471.30.00"
+            }
+        ],
+        "LabelFormat": "PDF"
+    }
+}
+                    </pre>
+                </div>
+
+                <div class="example-response">
+                    <h4>Response example:</h4>
+                    <pre class="json-example">
+{
+    "ErrorLevel": 0,
+    "Error": "",
+    "Shipment": {
+        "TrackingNumber": "LX250123456789NL",
+        "ShipperReference": "REF1234567890",
+        "DisplayId": "123450000",
+        "Service": "PPTT",
+        "Carrier": "PostNL Packet Tracked",
+        "CarrierTrackingNumber": "LX250123456789NL",
+        "CarrierLocalTrackingNumber": "LX250123456789NL",
+        "CarrierTrackingUrl": "http://tracking.carrier.com/LX250123456789NL",
+        "LabelFormat": "PDF",
+        "LabelType": "Label",
+        "LabelImage": "base64_encoded_data"
+    }
+}
+                    </pre>
+                </div>
+            </div>
+
+            <div id="get-shipment-label" class="section">
+                <h2><i class="fas fa-tag"></i> GetShipmentLabel</h2>
+                <p>Downloads a shipment label in the specified format.</p>
+
+                <h4>Request parameters:</h4>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Apikey</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>API key</td>
+                        </tr>
+                        <tr>
+                            <td>Command</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>Must be "GetShipmentLabel"</td>
+                        </tr>
+                        <tr>
+                            <td>Shipment</td>
+                            <td>object</td>
+                            <td class="required">Yes</td>
+                            <td>Data for shipment identification</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h4>Shipment object structure:</h4>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TrackingNumber</td>
+                            <td>string</td>
+                            <td class="required">Yes*</td>
+                            <td>Tracking number (required if ShipperReference not provided)</td>
+                        </tr>
+                        <tr>
+                            <td>ShipperReference</td>
+                            <td>string</td>
+                            <td class="required">Yes*</td>
+                            <td>Sender reference (required if TrackingNumber not provided)</td>
+                        </tr>
+                        <tr>
+                            <td>LabelFormat</td>
+                            <td>string</td>
+                            <td class="optional">No</td>
+                            <td>Label format (PDF, PNG, ZPL300, ZPL200, ZPL, EPL)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <div class="example-request">
+                    <h4>Request example:</h4>
+                    <pre class="json-example">
+{
+    "Apikey": "ylToImatPpw6cNayhgQj",
+    "Command": "GetShipmentLabel",
+    "Shipment": {
+        "TrackingNumber": "LX250123456789NL",
+        "LabelFormat": "PDF"
+    }
+}
+                    </pre>
+                </div>
+
+                <div class="example-response">
+                    <h4>Response example:</h4>
+                    <pre class="json-example">
+{
+    "ErrorLevel": 0,
+    "Error": "",
+    "Shipment": {
+        "TrackingNumber": "LX250123456789NL",
+        "ShipperReference": "REF1234567890",
+        "DisplayId": "123450000",
+        "Service": "PPTT",
+        "Carrier": "PostNL Packet Tracked",
+        "CarrierTrackingNumber": "LX250123456789NL",
+        "CarrierLocalTrackingNumber": "LX250123456789NL",
+        "CarrierTrackingUrl": "http://tracking.carrier.com/LX250123456789NL",
+        "LabelFormat": "PDF",
+        "LabelType": "Label",
+        "LabelImage": "base64_encoded_svg_data"
+    }
+}
+                    </pre>
+                </div>
+            </div>
+
+            <div id="get-services" class="section">
+                <h2><i class="fas fa-list-alt"></i> GetServices</h2>
+                <p>Returns a list of all supported courier services.</p>
+
+                <div class="example-request">
+                    <h4>Request example:</h4>
+                    <pre class="json-example">
+{
+    "Apikey": "ylToImatPpw6cNayhgQj",
+    "Command": "GetServices"
+}
+                    </pre>
+                </div>
+
+                <div class="example-response">
+                    <h4>Response example:</h4>
+                    <pre class="json-example">
+{
+    "ErrorLevel": 0,
+    "Error": "",
+    "Services": {
+        "PPLEU": "PostNL Parcel EU",
+        "PPLGE/GU": "PostNL Parcel GlobalPack",
+        "RM24/48(S)": "Royal Mail Tracked",
+        "PPTT": "PostNL Packet Tracked",
+        "PPTR/NT": "PostNL Packet Registered",
+        "SEND(2)": "Sending",
+        "ITCR": "Italian Post Crono",
+        "HEHDS": "Hermes",
+        "CPHD(S)": "Colis Prive",
+        "SC***": "Spring Com",
+        "PPND/HD(S)": "PostNL Parcel Benelux"
+    }
+}
+                    </pre>
+                </div>
+            </div>
+
+            <div id="get-service-info" class="section">
+                <h2><i class="fas fa-info"></i> GetServiceInfo</h2>
+                <p>Returns detailed information about a specific courier service.</p>
+
+                <h4>Request parameters:</h4>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Apikey</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>API key</td>
+                        </tr>
+                        <tr>
+                            <td>Command</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>Must be "GetServiceInfo"</td>
+                        </tr>
+                        <tr>
+                            <td>Service</td>
+                            <td>string</td>
+                            <td class="required">Yes</td>
+                            <td>Courier service code</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <div class="example-request">
+                    <h4>Request example:</h4>
+                    <pre class="json-example">
+{
+    "Apikey": "ylToImatPpw6cNayhgQj",
+    "Command": "GetServiceInfo",
+    "Service": "PPTT"
+}
+                    </pre>
+                </div>
+
+                <div class="example-response">
+                    <h4>Response example:</h4>
+                    <pre class="json-example">
+{
+    "ErrorLevel": 0,
+    "Error": "",
+    "ServiceInfo": {
+        "code": "PPTT",
+        "name": "PostNL Packet Tracked",
+        "description": "PostNL tracked shipment",
+        "maxWeight": 2.0,
+        "supportedCountries": [
+            "AU", "AT", "BE", "BG", "BR", "BY", "CA", "CH", "CN", "CY",
+            "CZ", "DK", "DE", "EE", "ES", "FI", "FR", "GB", "GF", "GI",
+            "GP", "GR", "HK", "HR", "HU", "ID", "IE", "IL", "IS", "IT",
+            "JP", "KR", "LB", "LT", "LU", "LV", "MQ", "MT", "MY", "NL",
+            "NO", "NZ", "PL", "PT", "RE", "RO", "RS", "RU", "SA", "SE",
+            "SG", "SI", "SK", "TH", "TR", "US"
+        ]
+    }
+}
+                    </pre>
+                </div>
+            </div>
+
+            <div id="services" class="section">
+                <h2><i class="fas fa-truck"></i> Supported services</h2>
+                <p>List of all supported courier services with descriptions:</p>
+
+                <div class="service-list">
+                    <div class="service-card">
+                        <h4>PPTT - PostNL Packet Tracked</h4>
+                        <p>PostNL tracked shipment</p>
+                        <div class="countries">Maximum weight: 2.0 kg</div>
+                    </div>
+
+                    <div class="service-card">
+                        <h4>PPLEU - PostNL Parcel EU</h4>
+                        <p>PostNL parcel in EU</p>
+                        <div class="countries">EU countries</div>
+                    </div>
+
+                    <div class="service-card">
+                        <h4>PPLGE/GU - PostNL Parcel GlobalPack</h4>
+                        <p>PostNL global parcel</p>
+                        <div class="countries">All countries</div>
+                    </div>
+
+                    <div class="service-card">
+                        <h4>RM24/48(S) - Royal Mail Tracked</h4>
+                        <p>Royal Mail tracked shipment</p>
+                        <div class="countries">United Kingdom</div>
+                    </div>
+
+                    <div class="service-card">
+                        <h4>PPTR/NT - PostNL Packet Registered</h4>
+                        <p>PostNL registered shipment</p>
+                        <div class="countries">All countries</div>
+                    </div>
+
+                    <div class="service-card">
+                        <h4>SEND(2) - Sending</h4>
+                        <p>Sending shipment</p>
+                        <div class="countries">Sending destination countries</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field-limits" class="section">
+                <h2><i class="fas fa-ruler"></i> Field limits</h2>
+                <p>Maximum field lengths for different services:</p>
+
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>PPTT</th>
+                            <th>PPLEU</th>
+                            <th>PPLGE/GU</th>
+                            <th>RM24/48(S)</th>
+                            <th>PPTR/NT</th>
+                            <th>SEND(2)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Name</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>Company</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>AddressLine1</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>AddressLine2</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>AddressLine3</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>City</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>State</td>
+                            <td>30</td>
+                            <td>35</td>
+                            <td>50</td>
+                            <td>30</td>
+                            <td>30</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>Zip</td>
+                            <td>20</td>
+                            <td>20</td>
+                            <td>20</td>
+                            <td>20</td>
+                            <td>20</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>DisplayId</td>
+                            <td>15</td>
+                            <td>15</td>
+                            <td>15</td>
+                            <td>15</td>
+                            <td>15</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td>20</td>
+                            <td>NotPrinted</td>
+                            <td>105</td>
+                            <td>NotPrinted</td>
+                            <td>20</td>
+                            <td>NotPrinted</td>
+                        </tr>
+                        <tr>
+                            <td>HsCode</td>
+                            <td>25</td>
+                            <td>NotPrinted</td>
+                            <td>6</td>
+                            <td>NotPrinted</td>
+                            <td>25</td>
+                            <td>NotPrinted</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td>15</td>
+                            <td>15</td>
+                            <td>15</td>
+                            <td>NotPrinted</td>
+                            <td>15</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>NotPrinted</td>
+                            <td>NotPrinted</td>
+                            <td>NotPrinted</td>
+                            <td>NotPrinted</td>
+                            <td>NotPrinted</td>
+                            <td>NotPrinted</td>
+                        </tr>
+                        <tr>
+                            <td>Weight</td>
+                            <td>2.0 kg</td>
+                            <td>30.0 kg</td>
+                            <td>30.0 kg</td>
+                            <td>20.0 kg</td>
+                            <td>2.0 kg</td>
+                            <td>30.0 kg</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h3>Supported label formats</h3>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Format</th>
+                            <th>Description</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PDF</strong></td>
+                            <td>Label in PDF format</td>
+                            <td>Default format, best quality</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PNG</strong></td>
+                            <td>Label in PNG format</td>
+                            <td>Raster image, good quality</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ZPL300</strong></td>
+                            <td>ZPL code for 300 DPI printers</td>
+                            <td>High resolution thermal printers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ZPL200</strong></td>
+                            <td>ZPL code for 200 DPI printers</td>
+                            <td>Standard resolution thermal printers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ZPL</strong></td>
+                            <td>ZPL code (default 300 DPI)</td>
+                            <td>Standard ZPL format</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EPL</strong></td>
+                            <td>EPL code for 203 DPI printers</td>
+                            <td>Epson printers</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div id="error-codes" class="section">
+                <h2><i class="fas fa-exclamation-triangle"></i> Error codes</h2>
+                <p>List of possible error codes and their meanings:</p>
+
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>ErrorLevel</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Success - operation completed successfully</td>
+                            <td>Shipment created</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Validation error - invalid data</td>
+                            <td>Missing required field</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>System error - technical problem</td>
+                            <td>Database connection error</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <h4>Common validation errors:</h4>
+                <div class="table-responsive">
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Error</th>
+                            <th>Cause</th>
+                            <th>Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Missing required field</strong></td>
+                            <td>Not all required fields provided</td>
+                            <td>Check documentation and add missing fields</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invalid format</strong></td>
+                            <td>Data doesn't meet format requirements</td>
+                            <td>Check data format (e.g. ISO 2 country code)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Limit exceeded</strong></td>
+                            <td>Field exceeds maximum length</td>
+                            <td>Shorten text to service limit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Unsupported service</strong></td>
+                            <td>Provided service is not supported</td>
+                            <td>Use one of the supported services</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invalid country</strong></td>
+                            <td>Country not supported by service</td>
+                            <td>Check supported countries for selected service</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invalid weight</strong></td>
+                            <td>Weight exceeds service limit</td>
+                            <td>Check maximum weight for service</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invalid HS code</strong></td>
+                            <td>HS code has incorrect length</td>
+                            <td>Use HS code with 6-10 characters</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invalid phone number</strong></td>
+                            <td>Phone number format is incorrect</td>
+                            <td>Use only digits, no spaces or special characters</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Base.com Courier API. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Auto-add responsive wrappers to tables
+        document.addEventListener('DOMContentLoaded', function() {
+            const tables = document.querySelectorAll('.params-table');
+            tables.forEach(table => {
+                if (!table.parentElement.classList.contains('table-responsive')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.classList.add('table-responsive');
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.nav-menu a').forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Scroll to section
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Activate link based on scroll position
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9abc2ef6ad7ef61a","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"70b053a79aea48b3b5fa8eb821e109ac"}' crossorigin="anonymous"></script>
+</body>
+</html> 

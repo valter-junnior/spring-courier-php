@@ -1,0 +1,28 @@
+Your individual API key: ylToImatPpw6cNayhgQj
+API key validity: 2025-12-16 16:37:56
+API Documentation: https://developers.baselinker.com/recruitment/docs/?hash=38GkA31uGSQ2WmW5A2mb4BXEX56ipkhbRcw2W9WhCKvh8YLiqF
+
+
+The goal of the task is to create a shipment and download the shipping label for the courier broker.
+As a base file for further work, you should use the spring.php file, which has been filled with basic parameters necessary for creating a shipment
+and downloading the label, as well as fictitious address data for the recipient and sender.
+
+The function named newPackage() creating a shipment should accept specific parameters:
+newPackage(array $order, array $params) - where:
+ - $order is an associative array containing all address information necessary for creating a shipment (mainly recipient and sender data)
+ - $params is an associative array containing all additional information necessary for creating a shipment and generating a label (API key, service, etc.)
+In case of failure during shipment creation, the function should return and display a readable error from the API in the browser.
+
+The function named packagePDF() returning the shipment label should accept specific parameters:
+packagePDF(string $trackingNumber)
+ - $trackingNumber is a string storing the shipment number returned by the newPackage() function
+The function should return and display a readable error from the API in the browser in case of failure or 'spit out' the shipping label in the browser in 'save' mode.
+
+Additional information:
+ When writing code (including division into classes/methods), follow the "KISS principle" rule
+ Code should be as simple as possible and consist of the smallest number of files: preferably one file with a courier class and another file creating an object and calling methods
+ Pay attention to character limits in delivery address fields and handle them
+ Handling any errors returned by the API (including connection errors) is very important (checking data coming in the newPackage function parameter can be omitted) - during testing of your task we will use various incorrect API parameters to verify the content/quality of messages returned to the browser
+ Only use functions/classes built into PHP
+ PSR-12 coding standard
+ Spend as much time on the task as you want/need

@@ -1,0 +1,11 @@
+{
+  "name": "valter/junior-task",
+  "description": "Recruitment task — courier client",
+  "type": "project",
+  "require": {},
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
+  }
+}
