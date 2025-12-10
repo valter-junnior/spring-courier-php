@@ -21,7 +21,7 @@ RUN sed -ri -e 's!/var/www/html!/var/www/html/src!g' /etc/apache2/sites-availabl
 
 # Copy application files
 WORKDIR /var/www/html
-COPY ./src/ /var/www/html
+COPY . /var/www/html
 
 # Ensure proper permissions
 RUN chown -R www-data:www-data /var/www/html \
